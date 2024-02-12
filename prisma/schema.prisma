@@ -1,0 +1,858 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_clarification_action {
+  id                                Int                            @id @default(autoincrement())
+  request_id                        Int?
+  code                              String                         @db.VarChar(255)
+  name                              String                         @db.VarChar(255)
+  url                               String                         @db.VarChar(255)
+  priority                          Int?
+  allow_role                        String?                        @db.LongText
+  allow_role_except                 String?                        @db.LongText
+  allow_permission                  String?                        @db.LongText
+  allow_permission_except           String?                        @db.LongText
+  allow_clarification_status        String?                        @db.LongText
+  allow_clarification_status_except String?                        @db.LongText
+  allow_organization                String?                        @db.LongText
+  style                             String?                        @db.VarChar(255)
+  opened_at                         DateTime?                      @db.DateTime(0)
+  created_at                        DateTime                       @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                        DateTime                       @default(now()) @db.Timestamp(0)
+  deleted_at                        DateTime?                      @db.DateTime(0)
+  type                              String                         @db.VarChar(255)
+  catalog_clarification_request     catalog_clarification_request? @relation(fields: [request_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_19BCBFB1427EB8A5")
+
+  @@index([code], map: "Catalog_Clarification_ActionCode")
+  @@index([request_id], map: "IDX_19BCBFB1427EB8A5")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_clarification_event {
+  id                            Int                            @id @default(autoincrement())
+  request_id                    Int?
+  publication_datetime          DateTime?                      @db.DateTime(0)
+  name                          String?                        @db.LongText
+  url                           String?                        @db.LongText
+  canceled                      Boolean?
+  allow_role                    String?                        @db.LongText
+  allow_organization            String?                        @db.LongText
+  guid                          String                         @db.VarChar(255)
+  created_at                    DateTime                       @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                    DateTime                       @default(now()) @db.Timestamp(0)
+  deleted_at                    DateTime?                      @db.DateTime(0)
+  type                          String                         @db.VarChar(255)
+  event_type                    String?                        @db.VarChar(255)
+  catalog_clarification_request catalog_clarification_request? @relation(fields: [request_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_956427DF427EB8A5")
+
+  @@index([guid], map: "Catalog_Clarification_EventGuid")
+  @@index([request_id], map: "IDX_956427DF427EB8A5")
+}
+
+model catalog_clarification_interaction {
+  id                            Int                            @id @default(autoincrement())
+  request_id                    Int?
+  member_id                     Int?
+  organization_id               Int?
+  is_read                       Boolean?
+  created_at                    DateTime                       @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  deleted_at                    DateTime?                      @db.DateTime(0)
+  type                          String                         @db.VarChar(255)
+  catalog_clarification_request catalog_clarification_request? @relation(fields: [request_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_23BBE7B6427EB8A5")
+
+  @@index([member_id], map: "Clarification_Organization_Action_Member")
+  @@index([organization_id], map: "Clarification_Organization_Action_Organization")
+  @@index([request_id], map: "IDX_23BBE7B6427EB8A5")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_clarification_request {
+  id                                Int                                 @id @default(autoincrement())
+  status_id                         Int
+  type_id                           Int
+  lot_guid                          String                              @db.VarChar(255)
+  lot_id                            Int
+  lot_subject                       String?                             @db.LongText
+  lot_ordinal_number                Int
+  lot_url_vsrz                      String                              @db.VarChar(255)
+  procedure_guid                    String                              @db.VarChar(255)
+  procedure_id                      Int
+  procedure_name                    String                              @db.LongText
+  procedure_type                    String                              @db.VarChar(255)
+  procedure_url_vsrz                String                              @db.VarChar(255)
+  procedure_registration_number     String                              @db.VarChar(255)
+  organization_guid                 String                              @db.VarChar(255)
+  organization_id                   Int
+  organization_full_name            String                              @db.LongText
+  organization_short_name           String?                             @db.LongText
+  organization_inn                  String                              @db.VarChar(255)
+  organization_kpp                  String?                             @db.VarChar(255)
+  organization_ogrn                 String?                             @db.VarChar(255)
+  organization_role                 String                              @db.VarChar(255)
+  subject                           String?                             @db.LongText
+  number                            String?                             @db.VarChar(255)
+  publication_datetime              DateTime?                           @db.DateTime(0)
+  regulated_datetime                DateTime?                           @db.DateTime(0)
+  archive                           Boolean?                            @default(false)
+  guid                              String                              @db.VarChar(255)
+  created_at                        DateTime                            @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                        DateTime                            @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  deleted_at                        DateTime?                           @db.DateTime(0)
+  type                              String                              @db.VarChar(255)
+  url                               String?                             @db.VarChar(255)
+  catalog_clarification_action      catalog_clarification_action[]
+  catalog_clarification_event       catalog_clarification_event[]
+  catalog_clarification_interaction catalog_clarification_interaction[]
+  catalog_clarification_status      catalog_clarification_status        @relation(fields: [status_id], references: [id], onUpdate: Restrict, map: "FK_99AE8EDE6BF700BD")
+  catalog_clarification_type        catalog_clarification_type          @relation(fields: [type_id], references: [id], onUpdate: Restrict, map: "FK_99AE8EDEC54C8C93")
+
+  @@index([guid], map: "Catalog_Clarification_Guid")
+  @@index([lot_guid], map: "Catalog_Clarification_LotGuid")
+  @@index([lot_id], map: "Catalog_Clarification_LotId")
+  @@index([number], map: "Catalog_Clarification_Number")
+  @@index([organization_guid], map: "Catalog_Clarification_OrganizationGuid")
+  @@index([organization_id], map: "Catalog_Clarification_OrganizationId")
+  @@index([organization_inn], map: "Catalog_Clarification_OrganizationInn")
+  @@index([organization_kpp], map: "Catalog_Clarification_OrganizationKpp")
+  @@index([organization_ogrn], map: "Catalog_Clarification_OrganizationOgrn")
+  @@index([procedure_guid], map: "Catalog_Clarification_ProcedureGuid")
+  @@index([procedure_id], map: "Catalog_Clarification_ProcedureId")
+  @@index([procedure_registration_number], map: "Catalog_Clarification_ProcedureRegistrationNumber")
+  @@index([procedure_type], map: "Catalog_Clarification_ProcedureType")
+  @@index([status_id], map: "IDX_99AE8EDE6BF700BD")
+  @@index([type_id], map: "IDX_99AE8EDEC54C8C93")
+}
+
+model catalog_clarification_status {
+  id                            Int                             @id @default(autoincrement())
+  code                          String                          @unique(map: "UNIQ_2570563F77153098") @db.VarChar(255)
+  name                          String?                         @db.VarChar(255)
+  catalog_clarification_request catalog_clarification_request[]
+}
+
+model catalog_clarification_type {
+  id                            Int                             @id @default(autoincrement())
+  code                          String                          @unique(map: "UNIQ_979965C177153098") @db.VarChar(255)
+  name                          String?                         @db.VarChar(255)
+  catalog_clarification_request catalog_clarification_request[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_contract {
+  id                            Int                          @id @default(autoincrement())
+  status_id                     Int
+  registration_number           String?                      @db.VarChar(255)
+  ordinal_number                Int
+  lot_guid                      String                       @db.VarChar(255)
+  lot_id                        Int
+  lot_subject                   String                       @db.LongText
+  lot_ordinal_number            Int
+  lot_url_vsrz                  String                       @db.VarChar(255)
+  procedure_guid                String                       @db.VarChar(255)
+  procedure_id                  Int
+  procedure_name                String                       @db.LongText
+  procedure_url_vsrz            String                       @db.VarChar(255)
+  procedure_registration_number String                       @db.VarChar(255)
+  procedure_type                String?                      @db.VarChar(255)
+  customer_guid                 String                       @db.VarChar(255)
+  customer_id                   Int
+  customer_full_name            String                       @db.LongText
+  customer_short_name           String?                      @db.LongText
+  customer_inn                  String                       @db.VarChar(255)
+  customer_kpp                  String                       @db.VarChar(255)
+  customer_ogrn                 String                       @db.VarChar(255)
+  customer_role                 String                       @db.VarChar(255)
+  supplier_guid                 String                       @db.VarChar(255)
+  supplier_id                   Int
+  supplier_full_name            String                       @db.LongText
+  supplier_short_name           String?                      @db.LongText
+  supplier_inn                  String                       @db.VarChar(255)
+  supplier_kpp                  String?                      @db.VarChar(255)
+  supplier_ogrn                 String?                      @db.VarChar(255)
+  supplier_role                 String                       @db.VarChar(255)
+  price                         Decimal?                     @db.Decimal(31, 11)
+  agreement_price               Decimal?                     @db.Decimal(20, 2)
+  price_without_preference      Decimal?                     @db.Decimal(20, 2)
+  currency_Id                   Int
+  execution_requirement         Boolean
+  use_preference                Boolean
+  active                        Boolean
+  version                       Int
+  regulated_datetime            DateTime?                    @db.DateTime(0)
+  formation_sign_datetime       DateTime?                    @db.DateTime(0)
+  supplier_sign_datetime        DateTime?                    @db.DateTime(0)
+  customer_sign_datetime        DateTime?                    @db.DateTime(0)
+  guid                          String                       @db.VarChar(255)
+  created_at                    DateTime                     @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                    DateTime                     @default(now()) @db.Timestamp(0)
+  deleted_at                    DateTime?                    @db.DateTime(0)
+  type                          String                       @db.VarChar(255)
+  start_price                   Float?
+  conclude_contract_right       Boolean?                     @default(false)
+  max_price_decrease            Decimal?                     @db.Decimal(30, 11)
+  saving                        Decimal?                     @db.Decimal(22, 2)
+  calculated_deviation_date     DateTime?                    @db.Date
+  catalog_contract_status       catalog_contract_status      @relation(fields: [status_id], references: [id], onUpdate: Restrict, map: "FK_DB58F6476BF700BD")
+  catalog_contract_action       catalog_contract_action[]
+  catalog_contract_agreement    catalog_contract_agreement[]
+  catalog_contract_event        catalog_contract_event[]
+
+  @@index([currency_Id], map: "Contract_Currency_ID")
+  @@index([customer_guid], map: "Contract_Customer_GUID")
+  @@index([customer_id], map: "Contract_Customer_ID")
+  @@index([customer_inn], map: "Contract_Customer_INN")
+  @@index([customer_kpp], map: "Contract_Customer_KPP")
+  @@index([customer_ogrn], map: "Contract_Customer_ORGN")
+  @@index([customer_role], map: "Contract_Customer_Role")
+  @@index([guid], map: "Contract_GUID")
+  @@index([lot_guid], map: "Contract_Lot_GUID")
+  @@index([lot_id], map: "Contract_Lot_ID")
+  @@index([procedure_guid], map: "Contract_Procedure_GUID")
+  @@index([procedure_id], map: "Contract_Procedure_ID")
+  @@index([procedure_registration_number], map: "Contract_Procedure_Registration_Number")
+  @@index([registration_number], map: "Contract_Registration_Number")
+  @@index([supplier_guid], map: "Contract_Supplier_GUID")
+  @@index([supplier_id], map: "Contract_Supplier_ID")
+  @@index([supplier_inn], map: "Contract_Supplier_INN")
+  @@index([supplier_kpp], map: "Contract_Supplier_KPP")
+  @@index([supplier_ogrn], map: "Contract_Supplier_OGRN")
+  @@index([supplier_role], map: "Contract_Supplier_Role")
+  @@index([status_id], map: "IDX_DB58F6476BF700BD")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_contract_action {
+  id                           Int              @id @default(autoincrement())
+  contract_id                  Int
+  code                         String           @db.VarChar(255)
+  name                         String           @db.VarChar(255)
+  url                          String           @db.VarChar(255)
+  priority                     Int?
+  allow_role                   String?          @db.LongText
+  allow_role_except            String?          @db.LongText
+  allow_permission             String?          @db.LongText
+  allow_permission_except      String?          @db.LongText
+  allow_contract_status        String?          @db.LongText
+  allow_contract_status_except String?          @db.LongText
+  allow_organization           String?          @db.LongText
+  style                        String?          @db.VarChar(255)
+  opened_at                    DateTime?        @db.DateTime(0)
+  created_at                   DateTime         @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                   DateTime         @default(now()) @db.Timestamp(0)
+  deleted_at                   DateTime?        @db.DateTime(0)
+  catalog_contract             catalog_contract @relation(fields: [contract_id], references: [id], onUpdate: Restrict, map: "FK_5AE60702576E0FD")
+
+  @@index([code], map: "Catalog_Contract_Action_Code")
+  @@index([contract_id], map: "IDX_5AE60702576E0FD")
+}
+
+model catalog_contract_agreement {
+  id                                Int                                @id @default(autoincrement())
+  contract_id                       Int
+  status_id                         Int
+  guid                              String                             @db.VarChar(255)
+  version                           Int
+  number                            String?                            @db.VarChar(255)
+  price                             Decimal                            @db.Decimal(20, 2)
+  outside_etp                       Boolean
+  is_finish                         Boolean
+  created_at                        DateTime                           @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                        DateTime                           @default(now()) @db.Timestamp(0)
+  deleted_at                        DateTime?                          @db.DateTime(0)
+  catalog_contract                  catalog_contract                   @relation(fields: [contract_id], references: [id], onUpdate: Restrict, map: "FK_D574E23C2576E0FD")
+  catalog_contract_agreement_status catalog_contract_agreement_status  @relation(fields: [status_id], references: [id], onUpdate: Restrict, map: "FK_D574E23C6BF700BD")
+  catalog_contract_agreement_event  catalog_contract_agreement_event[]
+
+  @@index([contract_id], map: "IDX_D574E23C2576E0FD")
+  @@index([status_id], map: "IDX_D574E23C6BF700BD")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_contract_agreement_event {
+  id                         Int                         @id @default(autoincrement())
+  agreement_id               Int?
+  publication_datetime       DateTime?                   @db.DateTime(0)
+  name                       String?                     @db.LongText
+  url                        String?                     @db.LongText
+  allow_role                 String?                     @db.LongText
+  allow_organization         String?                     @db.LongText
+  guid                       String                      @db.VarChar(255)
+  created_at                 DateTime                    @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                 DateTime                    @default(now()) @db.Timestamp(0)
+  deleted_at                 DateTime?                   @db.DateTime(0)
+  catalog_contract_agreement catalog_contract_agreement? @relation(fields: [agreement_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_FF25754224890B2B")
+
+  @@index([guid], map: "Catalog_Contract_Event_GUID")
+  @@index([agreement_id], map: "IDX_FF25754224890B2B")
+}
+
+model catalog_contract_agreement_status {
+  id                         Int                          @id @default(autoincrement())
+  code                       String                       @db.VarChar(255)
+  name                       String?                      @db.VarChar(255)
+  catalog_contract_agreement catalog_contract_agreement[]
+
+  @@index([code], map: "Catalog_Contract_Agreement_Status_Code")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_contract_event {
+  id                   Int               @id @default(autoincrement())
+  contract_id          Int?
+  publication_datetime DateTime?         @db.DateTime(0)
+  name                 String?           @db.LongText
+  url                  String?           @db.LongText
+  canceled             Boolean?
+  allow_role           String?           @db.LongText
+  allow_organization   String?           @db.LongText
+  guid                 String            @db.VarChar(255)
+  created_at           DateTime          @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at           DateTime          @default(now()) @db.Timestamp(0)
+  deleted_at           DateTime?         @db.DateTime(0)
+  type                 String?           @db.VarChar(255)
+  catalog_contract     catalog_contract? @relation(fields: [contract_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EBDA848E2576E0FD")
+
+  @@index([guid], map: "Catalog_Contract_Event_GUID")
+  @@index([contract_id], map: "IDX_EBDA848E2576E0FD")
+}
+
+model catalog_contract_status {
+  id               Int                @id @default(autoincrement())
+  code             String             @db.VarChar(255)
+  name             String?            @db.VarChar(255)
+  catalog_contract catalog_contract[]
+
+  @@index([code], map: "Catalog_Contract_Status_Code")
+}
+
+model catalog_organization_parameter {
+  id                Int       @id @default(autoincrement())
+  name              String    @db.VarChar(255)
+  value             String    @db.LongText
+  organization_id   Int
+  organization_guid String    @db.VarChar(36)
+  user_id           Int?
+  user_guid         String?   @db.VarChar(36)
+  created_at        DateTime  @db.DateTime(0)
+  updated_at        DateTime? @db.DateTime(0)
+
+  @@index([organization_id], map: "IDX_1C6530357D8C8404")
+  @@index([user_id], map: "IDX_2C1444447D8C8411")
+  @@index([organization_guid], map: "IDX_3C1530357D8C8404")
+  @@index([user_guid], map: "IDX_4C0110257D8C8411")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_procedure {
+  id                                                                            Int                                         @id @default(autoincrement())
+  status_id                                                                     Int
+  type_id                                                                       Int
+  parent_id                                                                     Int?
+  name                                                                          String?                                     @db.LongText
+  registration_number                                                           String?                                     @db.VarChar(255)
+  version                                                                       Int?
+  publication_datetime                                                          DateTime?                                   @db.DateTime(0)
+  modification_datetime                                                         DateTime?                                   @db.DateTime(0)
+  placer_id                                                                     Int
+  placer_full_name                                                              String?                                     @db.LongText
+  placer_short_name                                                             String?                                     @db.LongText
+  placer_inn                                                                    String?                                     @db.VarChar(255)
+  placer_kpp                                                                    String?                                     @db.VarChar(255)
+  placer_ogrn                                                                   String?                                     @db.VarChar(255)
+  placer_guid                                                                   String?                                     @db.VarChar(255)
+  placer_role                                                                   String?                                     @db.VarChar(255)
+  placer_region_id                                                              Int?
+  oos_guid                                                                      String?                                     @db.VarChar(255)
+  etp_id                                                                        Int
+  guid                                                                          String                                      @db.VarChar(255)
+  url_oos                                                                       String?                                     @db.VarChar(255)
+  url_vsrz                                                                      String?                                     @db.VarChar(255)
+  is_joint_market                                                               Boolean?
+  is_for_spare_parts                                                            Boolean?
+  created_at                                                                    DateTime                                    @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                                                                    DateTime                                    @default(now()) @db.Timestamp(0)
+  deleted_at                                                                    DateTime?                                   @db.DateTime(0)
+  type                                                                          String                                      @db.VarChar(255)
+  specialized_organization_id                                                   Int?
+  specialized_organization_full_name                                            String?                                     @db.LongText
+  specialized_organization_short_name                                           String?                                     @db.LongText
+  specialized_organization_inn                                                  String?                                     @db.VarChar(255)
+  specialized_organization_kpp                                                  String?                                     @db.VarChar(255)
+  specialized_organization_ogrn                                                 String?                                     @db.VarChar(255)
+  specialized_organization_guid                                                 String?                                     @db.VarChar(255)
+  specialized_organization_role                                                 String?                                     @db.VarChar(255)
+  specialized_organization_region_id                                            Int?
+  customers_access_control                                                      String?                                     @db.LongText
+  abandoned_reason                                                              String?                                     @db.VarChar(50)
+  not_published_on_eis                                                          Boolean?
+  plan_type_id                                                                  Int?
+  catalog_procedure_status                                                      catalog_procedure_status                    @relation(fields: [status_id], references: [id], onUpdate: Restrict, map: "FK_660156A26BF700BD")
+  catalog_procedure                                                             catalog_procedure?                          @relation("catalog_procedureTocatalog_procedure", fields: [parent_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_660156A2727ACA70")
+  other_catalog_procedure                                                       catalog_procedure[]                         @relation("catalog_procedureTocatalog_procedure")
+  catalog_procedure_type_catalog_procedure_plan_type_idTocatalog_procedure_type catalog_procedure_type?                     @relation("catalog_procedure_plan_type_idTocatalog_procedure_type", fields: [plan_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_660156A27BF3C49B")
+  catalog_procedure_type_catalog_procedure_type_idTocatalog_procedure_type      catalog_procedure_type                      @relation("catalog_procedure_type_idTocatalog_procedure_type", fields: [type_id], references: [id], onUpdate: Restrict, map: "FK_660156A2C54C8C93")
+  catalog_procedure_feature                                                     catalog_procedure_feature[]
+  catalog_procedure_lot                                                         catalog_procedure_lot[]
+  organization_procedure_regulated_datetime                                     organization_procedure_regulated_datetime[]
+
+  @@index([guid], map: "Catalog_Procedure_Guid")
+  @@index([placer_id], map: "Catalog_Procedure_Placer")
+  @@index([placer_guid], map: "Catalog_Procedure_Placer_Guid")
+  @@index([placer_inn], map: "Catalog_Procedure_Placer_Inn")
+  @@index([placer_kpp], map: "Catalog_Procedure_Placer_Kpp")
+  @@index([placer_ogrn], map: "Catalog_Procedure_Placer_Ogrn")
+  @@index([placer_role], map: "Catalog_Procedure_Placer_Role")
+  @@index([registration_number], map: "Catalog_Procedure_RegistrationNumber")
+  @@index([specialized_organization_id], map: "Catalog_Procedure_Specialized_Organization")
+  @@index([specialized_organization_guid], map: "Catalog_Procedure_Specialized_Organization_Guid")
+  @@index([specialized_organization_inn], map: "Catalog_Procedure_Specialized_Organization_Inn")
+  @@index([specialized_organization_kpp], map: "Catalog_Procedure_Specialized_Organization_Kpp")
+  @@index([specialized_organization_ogrn], map: "Catalog_Procedure_Specialized_Organization_Ogrn")
+  @@index([specialized_organization_role], map: "Catalog_Procedure_Specialized_Organization_Role")
+  @@index([status_id], map: "IDX_660156A26BF700BD")
+  @@index([parent_id], map: "IDX_660156A2727ACA70")
+  @@index([plan_type_id], map: "IDX_660156A27BF3C49B")
+  @@index([type_id], map: "IDX_660156A2C54C8C93")
+}
+
+model catalog_procedure_complaint {
+  id                            Int      @id @default(autoincrement())
+  procedure_registration_number String   @db.VarChar(100)
+  complaint_type                String   @db.VarChar(50)
+  controlling_organization_id   Int?
+  created_at                    DateTime @db.DateTime(0)
+
+  @@index([procedure_registration_number], map: "IDX_PROCEDURE_REGISTRATION_NUMBER")
+}
+
+model catalog_procedure_favourite {
+  id                    Int                    @id @default(autoincrement())
+  lot_id                Int?
+  member_id             Int
+  created_at            DateTime               @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at            DateTime               @default(now()) @db.Timestamp(0)
+  deleted_at            DateTime?              @db.DateTime(0)
+  catalog_procedure_lot catalog_procedure_lot? @relation(fields: [lot_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_A717F055A8CBA5F7")
+
+  @@index([member_id], map: "Catalog_Lot_Favourite_member")
+  @@index([lot_id], map: "IDX_A717F055A8CBA5F7")
+}
+
+model catalog_procedure_feature {
+  id                             Int                             @id @default(autoincrement())
+  type_id                        Int?
+  procedure_id                   Int?
+  lot_id                         Int?
+  deleted_at                     DateTime?                       @db.DateTime(0)
+  catalog_procedure              catalog_procedure?              @relation(fields: [procedure_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_1EDCF92F1624BCD2")
+  catalog_procedure_lot          catalog_procedure_lot?          @relation(fields: [lot_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_1EDCF92FA8CBA5F7")
+  catalog_procedure_feature_type catalog_procedure_feature_type? @relation(fields: [type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_1EDCF92FC54C8C93")
+
+  @@index([procedure_id], map: "IDX_1EDCF92F1624BCD2")
+  @@index([lot_id], map: "IDX_1EDCF92FA8CBA5F7")
+  @@index([type_id], map: "IDX_1EDCF92FC54C8C93")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_procedure_feature_type {
+  id                        Int                         @id @default(autoincrement())
+  code                      String                      @db.VarChar(255)
+  title                     String                      @db.LongText
+  category                  String?                     @db.VarChar(50)
+  catalog_procedure_feature catalog_procedure_feature[]
+
+  @@index([code], map: "Catalog_Feature_TypeCode")
+}
+
+model catalog_procedure_integration_packet {
+  id                                          Int                                          @id @default(autoincrement())
+  type_id                                     Int?
+  status_id                                   Int?
+  guid                                        String?                                      @unique(map: "UNIQ_D2DC46C72B6FCFB2") @db.VarChar(255)
+  object_id                                   String?                                      @db.VarChar(255)
+  real_name                                   String?                                      @db.LongText
+  title                                       String?                                      @db.LongText
+  uri                                         String?                                      @db.LongText
+  hash                                        String?                                      @db.VarChar(100)
+  description                                 String?                                      @db.LongText
+  create_at                                   DateTime                                     @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  update_at                                   DateTime                                     @default(now()) @db.Timestamp(0)
+  deleted_at                                  DateTime?                                    @db.DateTime(0)
+  catalog_procedure_integration_packet_status catalog_procedure_integration_packet_status? @relation(fields: [status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_D2DC46C76BF700BD")
+  catalog_procedure_integration_packet_type   catalog_procedure_integration_packet_type?   @relation(fields: [type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_D2DC46C7C54C8C93")
+
+  @@index([object_id], map: "Catalog_Procedure_Integration_Packet_ObjectID")
+  @@index([status_id], map: "IDX_D2DC46C76BF700BD")
+  @@index([type_id], map: "IDX_D2DC46C7C54C8C93")
+}
+
+model catalog_procedure_integration_packet_status {
+  id                                   Int                                    @id @default(autoincrement())
+  code                                 String                                 @unique(map: "UNIQ_92D029A177153098") @db.VarChar(255)
+  name                                 String                                 @db.VarChar(255)
+  catalog_procedure_integration_packet catalog_procedure_integration_packet[]
+}
+
+model catalog_procedure_integration_packet_type {
+  id                                   Int                                    @id @default(autoincrement())
+  code                                 String                                 @unique(map: "UNIQ_32C7FD177153098") @db.VarChar(255)
+  name                                 String                                 @db.VarChar(255)
+  catalog_procedure_integration_packet catalog_procedure_integration_packet[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_procedure_lot {
+  id                                        Int                                         @id @default(autoincrement())
+  status_id                                 Int
+  procedure_id                              Int?
+  parent_id                                 Int?
+  version                                   Int?
+  ordinal_number                            Int?
+  subject                                   String?                                     @db.LongText
+  request_start_give_datetime               DateTime?                                   @db.DateTime(0)
+  request_end_give_datetime                 DateTime?                                   @db.DateTime(0)
+  request_review_end_datetime               DateTime?                                   @db.DateTime(0)
+  trade_start_datetime                      DateTime?                                   @db.DateTime(0)
+  trade_end_datetime                        DateTime?                                   @db.DateTime(0)
+  regulated_datetime                        DateTime?                                   @db.DateTime(0)
+  contract_start_price                      Float?
+  contract_start_price_currency_Id          Int?
+  is_joint_market                           Boolean?
+  is_for_spare_parts                        Boolean?
+  url_vsrz                                  String?                                     @db.VarChar(255)
+  oos_guid                                  String?                                     @db.VarChar(255)
+  etp_id                                    Int
+  guid                                      String                                      @db.VarChar(255)
+  additional_information                    String?                                     @db.LongText
+  created_at                                DateTime                                    @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                                DateTime                                    @default(now()) @db.Timestamp(0)
+  deleted_at                                DateTime?                                   @db.DateTime(0)
+  type                                      String                                      @db.VarChar(255)
+  is_contract_blocked                       Boolean?                                    @default(false)
+  contract_formation_datetime               DateTime?                                   @db.DateTime(0)
+  ikz                                       String?                                     @db.LongText
+  contract_start_price_spare_parts          Float?
+  is_drugs                                  Boolean?
+  has_request_provision                     Boolean?
+  has_contract_provision                    Boolean?
+  catalog_procedure_favourite               catalog_procedure_favourite[]
+  catalog_procedure_feature                 catalog_procedure_feature[]
+  catalog_procedure                         catalog_procedure?                          @relation(fields: [procedure_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_747346411624BCD2")
+  catalog_procedure_status                  catalog_procedure_status                    @relation(fields: [status_id], references: [id], onUpdate: Restrict, map: "FK_747346416BF700BD")
+  catalog_procedure_lot                     catalog_procedure_lot?                      @relation("catalog_procedure_lotTocatalog_procedure_lot", fields: [parent_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_74734641727ACA70")
+  other_catalog_procedure_lot               catalog_procedure_lot[]                     @relation("catalog_procedure_lotTocatalog_procedure_lot")
+  catalog_procedure_lot_action              catalog_procedure_lot_action[]
+  catalog_procedure_lot_customer            catalog_procedure_lot_customer[]
+  catalog_procedure_lot_event               catalog_procedure_lot_event[]
+  catalog_procedure_lot_item                catalog_procedure_lot_item[]
+  catalog_procedure_lot_observer            catalog_procedure_lot_observer[]
+  catalog_procedure_lot_responsible_officer catalog_procedure_lot_responsible_officer[]
+  catalog_procedure_request                 catalog_procedure_request[]
+
+  @@index([guid], map: "IDX_127344415BF550BD")
+  @@index([procedure_id], map: "IDX_747346411624BCD2")
+  @@index([status_id], map: "IDX_747346416BF700BD")
+  @@index([parent_id], map: "IDX_74734641727ACA70")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_procedure_lot_action {
+  id                          Int                   @id @default(autoincrement())
+  lot_id                      Int
+  code                        String                @db.VarChar(255)
+  name                        String                @db.VarChar(255)
+  url                         String                @db.VarChar(255)
+  priority                    Int?
+  allow_role                  String?               @db.LongText
+  allow_role_except           String?               @db.LongText
+  allow_permission            String?               @db.LongText
+  allow_permission_except     String?               @db.LongText
+  allow_lot_status            String?               @db.LongText
+  allow_lot_status_except     String?               @db.LongText
+  allow_request_status        String?               @db.LongText
+  allow_request_status_except String?               @db.LongText
+  allow_organization          String?               @db.LongText
+  style                       String?               @db.VarChar(255)
+  opened_at                   DateTime?             @db.DateTime(0)
+  created_at                  DateTime              @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                  DateTime              @default(now()) @db.Timestamp(0)
+  deleted_at                  DateTime?             @db.DateTime(0)
+  secondary_name              String?               @db.VarChar(255)
+  secondary_priority          Int?
+  is_secondary_head_action    Boolean?
+  catalog_procedure_lot       catalog_procedure_lot @relation(fields: [lot_id], references: [id], onUpdate: Restrict, map: "FK_DFAD5179A8CBA5F7")
+
+  @@index([code], map: "Catalog_Action_Code")
+  @@index([lot_id], map: "IDX_DFAD5179A8CBA5F7")
+}
+
+model catalog_procedure_lot_customer {
+  id                         Int                          @id @default(autoincrement())
+  lot_id                     Int
+  organization_id            Int
+  organization_full_name     String?                      @db.LongText
+  organization_short_name    String?                      @db.LongText
+  organization_inn           String?                      @db.VarChar(255)
+  organization_kpp           String?                      @db.VarChar(255)
+  organization_ogrn          String?                      @db.VarChar(255)
+  organization_guid          String?                      @db.VarChar(255)
+  organization_role          String?                      @db.VarChar(255)
+  organization_region_id     Int?
+  delivery_region_id         Int?
+  created_at                 DateTime                     @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                 DateTime                     @default(now()) @db.Timestamp(0)
+  deleted_at                 DateTime?                    @db.DateTime(0)
+  ikz                        String?                      @db.VarChar(255)
+  catalog_procedure_lot      catalog_procedure_lot        @relation(fields: [lot_id], references: [id], onUpdate: Restrict, map: "FK_C4D19226A8CBA5F7")
+  catalog_procedure_lot_item catalog_procedure_lot_item[]
+
+  @@index([organization_guid], map: "Catalog_Lot_Customer_Guid")
+  @@index([organization_inn], map: "Catalog_Lot_Customer_Inn")
+  @@index([organization_kpp], map: "Catalog_Lot_Customer_Kpp")
+  @@index([organization_ogrn], map: "Catalog_Lot_Customer_Ogrn")
+  @@index([organization_id], map: "Catalog_Lot_Customer_Organization")
+  @@index([delivery_region_id], map: "Catalog_Lot_Customer_Region")
+  @@index([organization_role], map: "Catalog_Lot_Customer_Role")
+  @@index([lot_id], map: "IDX_C4D19226A8CBA5F7")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_procedure_lot_event {
+  id                    Int                    @id @default(autoincrement())
+  lot_id                Int?
+  publication_datetime  DateTime?              @db.DateTime(0)
+  name                  String?                @db.LongText
+  url                   String?                @db.LongText
+  canceled              Boolean?
+  allow_role            String?                @db.LongText
+  allow_organization    String?                @db.LongText
+  guid                  String                 @db.VarChar(255)
+  created_at            DateTime               @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at            DateTime               @default(now()) @db.Timestamp(0)
+  deleted_at            DateTime?              @db.DateTime(0)
+  style                 String?                @db.VarChar(255)
+  event_type            String?                @db.VarChar(255)
+  catalog_procedure_lot catalog_procedure_lot? @relation(fields: [lot_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_88535DE5A8CBA5F7")
+
+  @@index([guid], map: "Catalog_Lot_Event_Guid")
+  @@index([lot_id], map: "IDX_88535DE5A8CBA5F7")
+}
+
+model catalog_procedure_lot_item {
+  id                              Int                              @id @default(autoincrement())
+  lot_id                          Int
+  lot_customer_id                 Int?
+  ordinal_number                  Int?
+  okpd2_id                        Int?
+  deleted_at                      DateTime?                        @db.DateTime(0)
+  type_id                         Int?
+  catalog_procedure_lot           catalog_procedure_lot            @relation(fields: [lot_id], references: [id], onUpdate: Restrict, map: "FK_843649E6A8CBA5F7")
+  catalog_procedure_lot_item_type catalog_procedure_lot_item_type? @relation(fields: [type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_843649E6C54C8C93")
+  catalog_procedure_lot_customer  catalog_procedure_lot_customer?  @relation(fields: [lot_customer_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_843649E6C6E1754F")
+
+  @@index([okpd2_id], map: "Catalog_Lot_Item_okpd2")
+  @@index([lot_id], map: "IDX_843649E6A8CBA5F7")
+  @@index([type_id], map: "IDX_843649E6C54C8C93")
+  @@index([lot_customer_id], map: "IDX_843649E6C6E1754F")
+}
+
+model catalog_procedure_lot_item_type {
+  id                         Int                          @id @default(autoincrement())
+  code                       String                       @db.VarChar(50)
+  name                       String                       @db.VarChar(100)
+  active                     Boolean
+  catalog_procedure_lot_item catalog_procedure_lot_item[]
+}
+
+model catalog_procedure_lot_observer {
+  id                    Int                    @id @default(autoincrement())
+  lot_id                Int?
+  organization_id       Int
+  deleted_at            DateTime?              @db.DateTime(0)
+  catalog_procedure_lot catalog_procedure_lot? @relation(fields: [lot_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_DE8758C8A8CBA5F7")
+
+  @@index([organization_id], map: "Catalog_Procedure_Observer_Organization")
+  @@index([lot_id], map: "IDX_DE8758C8A8CBA5F7")
+}
+
+model catalog_procedure_lot_responsible_officer {
+  id                                    Int                                    @id @default(autoincrement())
+  lot_id                                Int
+  organization_id                       Int
+  deleted_at                            DateTime?                              @db.DateTime(0)
+  responsible_officer_id                Int?
+  catalog_procedure_responsible_officer catalog_procedure_responsible_officer? @relation(fields: [responsible_officer_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_50D5F0DA3EDC7F21")
+  catalog_procedure_lot                 catalog_procedure_lot                  @relation(fields: [lot_id], references: [id], onUpdate: Restrict, map: "FK_50D5F0DAA8CBA5F7")
+
+  @@index([responsible_officer_id], map: "IDX_50D5F0DA3EDC7F21")
+  @@index([lot_id], map: "IDX_50D5F0DAA8CBA5F7")
+  @@index([organization_id], map: "idx_organization_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model catalog_procedure_request {
+  id                                                                                                Int                         @id @default(autoincrement())
+  status_id                                                                                         Int
+  additional_status_id                                                                              Int?
+  lot_id                                                                                            Int?
+  parent_id                                                                                         Int?
+  send_datetime                                                                                     DateTime?                   @db.DateTime(0)
+  organization_id                                                                                   Int
+  organization_full_name                                                                            String?                     @db.LongText
+  organization_short_name                                                                           String?                     @db.LongText
+  organization_inn                                                                                  String?                     @db.VarChar(255)
+  organization_kpp                                                                                  String?                     @db.VarChar(255)
+  organization_ogrn                                                                                 String?                     @db.VarChar(255)
+  organization_guid                                                                                 String?                     @db.VarChar(255)
+  organization_role                                                                                 String?                     @db.VarChar(255)
+  organization_region_id                                                                            Int?
+  guid                                                                                              String                      @db.VarChar(255)
+  created_at                                                                                        DateTime                    @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                                                                                        DateTime                    @default(now()) @db.Timestamp(0)
+  deleted_at                                                                                        DateTime?                   @db.DateTime(0)
+  spec_account                                                                                      String?                     @db.VarChar(20)
+  application_number                                                                                Int?
+  country_goods                                                                                     String?                     @db.LongText
+  catalog_procedure_status_catalog_procedure_request_additional_status_idTocatalog_procedure_status catalog_procedure_status?   @relation("catalog_procedure_request_additional_status_idTocatalog_procedure_status", fields: [additional_status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_3A9C03D64FDA6E0")
+  catalog_procedure_status_catalog_procedure_request_status_idTocatalog_procedure_status            catalog_procedure_status    @relation("catalog_procedure_request_status_idTocatalog_procedure_status", fields: [status_id], references: [id], onUpdate: Restrict, map: "FK_3A9C03D66BF700BD")
+  catalog_procedure_request                                                                         catalog_procedure_request?  @relation("catalog_procedure_requestTocatalog_procedure_request", fields: [parent_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_3A9C03D6727ACA70")
+  other_catalog_procedure_request                                                                   catalog_procedure_request[] @relation("catalog_procedure_requestTocatalog_procedure_request")
+  catalog_procedure_lot                                                                             catalog_procedure_lot?      @relation(fields: [lot_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_3A9C03D6A8CBA5F7")
+
+  @@index([guid], map: "Catalog_Lot_Request_Guid")
+  @@index([organization_id], map: "Catalog_Lot_Request_Organization")
+  @@index([organization_guid], map: "Catalog_Lot_Request_Organization_Guid")
+  @@index([organization_inn], map: "Catalog_Lot_Request_Organization_Inn")
+  @@index([organization_kpp], map: "Catalog_Lot_Request_Organization_Kpp")
+  @@index([organization_ogrn], map: "Catalog_Lot_Request_Organization_Ogrn")
+  @@index([organization_role], map: "Catalog_Lot_Request_Organization_Role")
+  @@index([additional_status_id], map: "IDX_3A9C03D64FDA6E0")
+  @@index([status_id], map: "IDX_3A9C03D66BF700BD")
+  @@index([parent_id], map: "IDX_3A9C03D6727ACA70")
+  @@index([lot_id], map: "IDX_3A9C03D6A8CBA5F7")
+}
+
+model catalog_procedure_responsible_officer {
+  id                                        Int                                         @id @default(autoincrement())
+  first_name                                String                                      @default("") @db.VarChar(300)
+  last_name                                 String                                      @default("") @db.VarChar(300)
+  middle_name                               String                                      @default("") @db.VarChar(300)
+  email                                     String                                      @default("") @db.VarChar(255)
+  member_id                                 Int?
+  catalog_procedure_lot_responsible_officer catalog_procedure_lot_responsible_officer[]
+
+  @@index([email], map: "idx_email")
+  @@index([member_id], map: "idx_member")
+}
+
+model catalog_procedure_status {
+  id                                                                                                 Int                         @id @default(autoincrement())
+  code                                                                                               String                      @db.VarChar(255)
+  name                                                                                               String?                     @db.VarChar(255)
+  type                                                                                               String                      @db.VarChar(255)
+  catalog_procedure                                                                                  catalog_procedure[]
+  catalog_procedure_lot                                                                              catalog_procedure_lot[]
+  catalog_procedure_request_catalog_procedure_request_additional_status_idTocatalog_procedure_status catalog_procedure_request[] @relation("catalog_procedure_request_additional_status_idTocatalog_procedure_status")
+  catalog_procedure_request_catalog_procedure_request_status_idTocatalog_procedure_status            catalog_procedure_request[] @relation("catalog_procedure_request_status_idTocatalog_procedure_status")
+
+  @@unique([code, type], map: "Catalog_Procedure_StatusCodeTypeUniq")
+  @@index([code], map: "Catalog_Procedure_StatusCode")
+}
+
+model catalog_procedure_type {
+  id                                                                       Int                 @id @default(autoincrement())
+  code                                                                     String              @db.VarChar(255)
+  name                                                                     String              @db.VarChar(255)
+  abbreviation                                                             String              @db.VarChar(255)
+  orderPriority                                                            Int?
+  catalog_procedure_catalog_procedure_plan_type_idTocatalog_procedure_type catalog_procedure[] @relation("catalog_procedure_plan_type_idTocatalog_procedure_type")
+  catalog_procedure_catalog_procedure_type_idTocatalog_procedure_type      catalog_procedure[] @relation("catalog_procedure_type_idTocatalog_procedure_type")
+
+  @@index([code], map: "Catalog_Procedure_Type_Code")
+}
+
+model catalog_sphinx_delta_counter {
+  index_name String   @unique(map: "index_name") @db.VarChar(255)
+  counter    Int
+  datetime   DateTime @db.DateTime(0)
+}
+
+model doctrine_migration_versions {
+  version String @id @db.VarChar(255)
+}
+
+model integration_catalog_packet {
+  id                                Int                                @id @default(autoincrement())
+  type_id                           Int?
+  status_id                         Int?
+  guid                              String?                            @unique(map: "UNIQ_4E24CD912B6FCFB2") @db.VarChar(255)
+  object_id                         String?                            @db.VarChar(255)
+  real_name                         String?                            @db.LongText
+  title                             String?                            @db.LongText
+  uri                               String?                            @db.LongText
+  hash                              String?                            @db.VarChar(100)
+  description                       String?                            @db.LongText
+  created_at                        DateTime                           @default(dbgenerated("'0000-00-00 00:00:00'")) @db.Timestamp(0)
+  updated_at                        DateTime                           @default(now()) @db.Timestamp(0)
+  deleted_at                        DateTime?                          @db.DateTime(0)
+  integration_catalog_packet_status integration_catalog_packet_status? @relation(fields: [status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4E24CD916BF700BD")
+  integration_catalog_packet_type   integration_catalog_packet_type?   @relation(fields: [type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4E24CD91C54C8C93")
+
+  @@index([status_id], map: "IDX_4E24CD916BF700BD")
+  @@index([type_id], map: "IDX_4E24CD91C54C8C93")
+  @@index([object_id], map: "Integration_Catalog_Packet_ObjectID")
+}
+
+model integration_catalog_packet_status {
+  id                         Int                          @id @default(autoincrement())
+  code                       String                       @unique(map: "UNIQ_297054B777153098") @db.VarChar(255)
+  name                       String                       @db.VarChar(255)
+  integration_catalog_packet integration_catalog_packet[]
+}
+
+model integration_catalog_packet_type {
+  id                         Int                          @id @default(autoincrement())
+  code                       String                       @unique(map: "UNIQ_E80493FE77153098") @db.VarChar(255)
+  name                       String                       @db.VarChar(255)
+  integration_catalog_packet integration_catalog_packet[]
+}
+
+model organization_procedure_regulated_datetime {
+  id                 Int                @id @default(autoincrement())
+  procedure_id       Int?
+  organization       String             @db.VarChar(255)
+  regulated_datetime DateTime?          @db.DateTime(0)
+  catalog_procedure  catalog_procedure? @relation(fields: [procedure_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_83326F291624BCD2")
+
+  @@index([procedure_id], map: "IDX_83326F291624BCD2")
+}
+
+model procedure_access {
+  id                 Int       @id @default(autoincrement())
+  user_operator_id   Int?
+  user_operator_guid String?   @db.VarChar(255)
+  user_id            Int?
+  user_guid          String?   @db.VarChar(255)
+  active             Boolean
+  create_datetime    DateTime? @db.DateTime(0)
+  procedure_number   String?   @db.VarChar(255)
+  procedure_type     String?   @db.VarChar(10)
+  procedure_id       Int?
+  placer_inn         String?   @db.VarChar(50)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model users {
+  id    BigInt @db.UnsignedBigInt
+  name  String @db.VarChar(256)
+  email String @db.VarChar(256)
+
+  @@ignore
+}
