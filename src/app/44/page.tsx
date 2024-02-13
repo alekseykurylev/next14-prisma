@@ -15,9 +15,11 @@ export default async function Page({
     limit?: string;
   };
 }) {
+  const defaultLimit = 25;
+
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
-  const limit = Number(searchParams?.limit) || 10;
+  const limit = Number(searchParams?.limit) || defaultLimit;
 
   const count = await fetchItemsPages(query);
 
@@ -43,7 +45,7 @@ export default async function Page({
         <Table query={query} currentPage={currentPage} limit={limit} />
       </Suspense>
       <div style={{ display: "flex", gap: 10, justifyContent: "right" }}>
-        <Limit />
+        <Limit values={[10, 25, 50, 100]} defaultValue={defaultLimit} />
         <Pagination count={count} limit={limit} />
         <div>Всего: {count}</div>
       </div>

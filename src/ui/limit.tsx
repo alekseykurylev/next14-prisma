@@ -2,7 +2,13 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function Limit() {
+export default function Limit({
+  values,
+  defaultValue,
+}: {
+  values: number[];
+  defaultValue: number;
+}) {
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const pathname = usePathname();
@@ -27,12 +33,17 @@ export default function Limit() {
         onChange={(e) => {
           handleSearch(e.target.value);
         }}
-        defaultValue={searchParams.get("limit")?.toString()}
+        defaultValue={
+          searchParams.get("limit")
+            ? searchParams.get("limit")?.toString()
+            : defaultValue
+        }
       >
-        <option value="10">10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
+        {values.map((item) => (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        ))}
       </select>
     </div>
   );

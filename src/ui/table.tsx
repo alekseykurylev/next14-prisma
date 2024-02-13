@@ -16,6 +16,7 @@ export default async function Table({
     <table className="table">
       <thead>
         <tr>
+          <th>type</th>
           <th>№</th>
           <th>name</th>
           <th>placer</th>
@@ -25,6 +26,7 @@ export default async function Table({
       <tbody>
         {data.map((item) => (
           <tr key={item.id}>
+            <td>{item.type}</td>
             <td>{item.registration_number}</td>
             <td>
               <Link href={`/44/${item.id}`}>{item.name}</Link>
