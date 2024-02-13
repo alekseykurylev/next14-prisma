@@ -32,6 +32,16 @@ export async function fetchFilteredItems(
         registration_number: true,
         placer_full_name: true,
         specialized_organization_full_name: true,
+        catalog_procedure_status: {
+          select: {
+            name: true,
+          },
+        },
+        catalog_procedure_lot: {
+          select: {
+            contract_start_price: true,
+          },
+        },
       },
       where: {
         OR: [

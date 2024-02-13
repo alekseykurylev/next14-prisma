@@ -19,8 +19,10 @@ export default async function Table({
           <th>type</th>
           <th>№</th>
           <th>name</th>
+          <th>price</th>
           <th>placer</th>
           <th>organization</th>
+          <th>status</th>
         </tr>
       </thead>
       <tbody>
@@ -31,10 +33,19 @@ export default async function Table({
             <td>
               <Link href={`/44/${item.id}`}>{item.name}</Link>
             </td>
+            <td>{item.catalog_procedure_lot[0].contract_start_price} RUB</td>
             <td>{item.placer_full_name}</td>
             <td>{item.specialized_organization_full_name}</td>
+            <td>{item.catalog_procedure_status.name}</td>
           </tr>
         ))}
+        {data.length === 0 && (
+          <tr>
+            <td colSpan={9999} align="center">
+              Данных не найдено
+            </td>
+          </tr>
+        )}
       </tbody>
     </table>
   );

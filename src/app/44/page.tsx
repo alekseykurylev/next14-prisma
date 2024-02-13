@@ -15,7 +15,7 @@ export default async function Page({
     limit?: string;
   };
 }) {
-  const defaultLimit = 25;
+  const defaultLimit = 10;
 
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
