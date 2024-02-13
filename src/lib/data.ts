@@ -4,8 +4,19 @@ import { db } from "@/lib/db";
 export async function getItem(id: number) {
   try {
     const data = await db.catalog_procedure.findFirst({
-      include: {
-        catalog_procedure_status: true,
+      select: {
+        name: true,
+        registration_number: true,
+        catalog_procedure_status: {
+          select: {
+            name: true,
+          },
+        },
+        catalog_procedure_lot: {
+          select: {
+            contract_start_price: true,
+          },
+        },
       },
       where: { id },
     });

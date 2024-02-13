@@ -27,17 +27,20 @@ export default async function Page({
     <div>
       <div style={{ display: "flex", gap: 10 }}>
         <div>
-          <Link href="/">Главная</Link>
+          <Link href="/">Home</Link>
         </div>
         <div>/</div>
-        <div>44</div>
+        <div>Catalog 44</div>
       </div>
 
-      <h1>44</h1>
+      <h1>Catalog 44</h1>
       <div
         style={{ display: "flex", gap: 10, justifyContent: "space-between" }}
       >
-        <Search placeholder="Search" />
+        <div>
+          <Search placeholder="Search" />
+        </div>
+
         <div>Всего: {count}</div>
       </div>
 

@@ -17,7 +17,7 @@ export default async function Table({
       <thead>
         <tr>
           <th>type</th>
-          <th>№</th>
+          <th>number</th>
           <th>name</th>
           <th>price</th>
           <th>placer</th>
