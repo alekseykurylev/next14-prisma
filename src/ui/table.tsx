@@ -9,7 +9,7 @@ export default async function Table({
   query: string;
   currentPage: number;
 }) {
-  const data = await fetchFilteredItems(query);
+  const data = await fetchFilteredItems(query, currentPage);
 
   return (
     <table className="table">

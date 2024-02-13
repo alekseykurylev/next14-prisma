@@ -47,6 +47,7 @@ export async function fetchFilteredItems(query: string, currentPage?: number) {
           },
         ],
       },
+      skip: currentPage,
       take: 10,
     });
     return data;
