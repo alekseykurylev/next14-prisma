@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
 import { getItem } from "@/lib/data";
 
 export default async function Page({ params }: { params: { id: number } }) {

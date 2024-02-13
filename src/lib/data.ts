@@ -1,11 +1,10 @@
-import { cache } from "react";
 import { unstable_noStore as noStore } from "next/cache";
-import prisma from "@/lib/prisma";
+import { db } from "@/lib/db";
 
 export async function getItems() {
   noStore();
   try {
-    const data = await prisma.catalog_procedure.findMany({
+    const data = await db.catalog_procedure.findMany({
       take: 10,
     });
     return data;
@@ -17,7 +16,7 @@ export async function getItems() {
 
 export async function getItem(id: number) {
   try {
-    const data = await prisma.catalog_procedure.findFirst({
+    const data = await db.catalog_procedure.findFirst({
       include: {
         catalog_procedure_status: true,
       },
