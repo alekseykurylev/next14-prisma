@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { getItems } from "@/lib/data";
 import Search from "@/ui/search";
+import Table from "@/ui/table";
+import { Suspense } from "react";
 
 export default async function Page({
   searchParams,
@@ -13,20 +14,23 @@ export default async function Page({
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
 
-  const data = await getItems();
+  // const data = await getItems();
 
   return (
-    <>
-      <Link href="/">Back</Link>
+    <div>
+      <div style={{ display: "flex", gap: 10 }}>
+        <div>
+          <Link href="/">Главная</Link>
+        </div>
+        <div>/</div>
+        <div>44</div>
+      </div>
+
       <h1>44</h1>
-      <Search />
-      <ul>
-        {data.map((item) => (
-          <li key={item.id}>
-            <Link href={`/44/${item.id}`}>{item.name}</Link>
-          </li>
-        ))}
-      </ul>
-    </>
+      <Search placeholder="Search" />
+      <Suspense key={query + currentPage} fallback="Loading">
+        <Table query={query} currentPage={currentPage} />
+      </Suspense>
+    </div>
   );
 }

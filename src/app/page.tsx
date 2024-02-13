@@ -1,5 +1,11 @@
 import Link from "next/link";
 
 export default async function Home() {
-  return <Link href="/44">44</Link>;
+  return (
+    <ul>
+      <li>
+        <Link href="/44">Catalog 44</Link>
+      </li>
+    </ul>
+  );
 }
