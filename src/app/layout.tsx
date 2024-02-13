@@ -16,7 +16,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <header style={{ height: 50, backgroundColor: "LightGray" }}>
+          header
+        </header>
+        {children}
+        <footer style={{ height: 50, backgroundColor: "LightGray" }}>
+          footer
+        </footer>
+      </body>
     </html>
   );
 }
