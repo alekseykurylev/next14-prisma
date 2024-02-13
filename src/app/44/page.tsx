@@ -40,7 +40,7 @@ export default async function Page({
         <Table query={query} currentPage={currentPage} />
       </Suspense>
       <div style={{ display: "flex", gap: 10, justifyContent: "right" }}>
-        {/* <Pagination totalPages={totalPages} /> */}
+        <Pagination totalPages={totalPages} />
         <div>Всего: {count}</div>
       </div>
     </div>
