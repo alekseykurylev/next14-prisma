@@ -1,5 +1,4 @@
 import { fetchFilteredItems } from "@/lib/data";
-import { catalog_procedure } from "@prisma/client";
 import Link from "next/link";
 
 export default async function Table({
