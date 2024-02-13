@@ -4,7 +4,13 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { generatePagination } from "@/lib/utils";
 
-export default function Pagination({ totalPages }: { totalPages: number }) {
+export default function Pagination({
+  count,
+  limit,
+}: {
+  count: number;
+  limit: number;
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -14,6 +20,8 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
     params.set("page", pageNumber.toString());
     return `${pathname}?${params.toString()}`;
   };
+
+  const totalPages = Math.ceil(count / limit);
 
   const allPages = generatePagination(currentPage, totalPages);
 
@@ -35,7 +43,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
           return (
             <PaginationNumber
-              key={page}
+              key={index}
               href={createPageURL(page)}
               page={page}
               position={position}

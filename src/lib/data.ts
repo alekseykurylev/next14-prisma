@@ -16,13 +16,18 @@ export async function getItem(id: number) {
   }
 }
 
-export async function fetchFilteredItems(query: string, currentPage?: number) {
+export async function fetchFilteredItems(
+  query: string,
+  currentPage: number,
+  limit: number
+) {
   noStore();
 
   try {
     const data = await db.catalog_procedure.findMany({
       select: {
         id: true,
+        type: true,
         name: true,
         registration_number: true,
         placer_full_name: true,
@@ -47,8 +52,8 @@ export async function fetchFilteredItems(query: string, currentPage?: number) {
           },
         ],
       },
-      skip: currentPage && (currentPage - 1) * 10,
-      take: 10,
+      skip: currentPage && (currentPage - 1) * limit,
+      take: limit,
     });
     return data;
   } catch (error) {
@@ -82,8 +87,8 @@ export async function fetchItemsPages(query: string) {
         ],
       },
     });
-    const totalPages = Math.ceil(count / 10);
-    return { count, totalPages };
+
+    return count;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch revenue data.");

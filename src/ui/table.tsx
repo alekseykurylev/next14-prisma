@@ -4,11 +4,13 @@ import Link from "next/link";
 export default async function Table({
   query,
   currentPage,
+  limit,
 }: {
   query: string;
   currentPage: number;
+  limit: number;
 }) {
-  const data = await fetchFilteredItems(query, currentPage);
+  const data = await fetchFilteredItems(query, currentPage, limit);
 
   return (
     <table className="table">

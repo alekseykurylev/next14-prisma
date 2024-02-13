@@ -4,6 +4,7 @@ import Table from "@/ui/table";
 import { Suspense } from "react";
 import { fetchItemsPages } from "@/lib/data";
 import Pagination from "@/ui/pagination";
+import Limit from "@/ui/limit";
 
 export default async function Page({
   searchParams,
@@ -11,12 +12,14 @@ export default async function Page({
   searchParams?: {
     query?: string;
     page?: string;
+    limit?: string;
   };
 }) {
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
+  const limit = Number(searchParams?.limit) || 10;
 
-  const { count, totalPages } = await fetchItemsPages(query);
+  const count = await fetchItemsPages(query);
 
   return (
     <div>
@@ -37,10 +40,11 @@ export default async function Page({
       </div>
 
       <Suspense key={query + currentPage} fallback="Loading">
-        <Table query={query} currentPage={currentPage} />
+        <Table query={query} currentPage={currentPage} limit={limit} />
       </Suspense>
       <div style={{ display: "flex", gap: 10, justifyContent: "right" }}>
-        <Pagination totalPages={totalPages} />
+        <Limit />
+        <Pagination count={count} limit={limit} />
         <div>Всего: {count}</div>
       </div>
     </div>
