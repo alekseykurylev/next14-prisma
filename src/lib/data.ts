@@ -1,26 +1,13 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { db } from "@/lib/db";
 
-export async function getItems() {
-  noStore();
-  try {
-    const data = await db.catalog_procedure.findMany({
-      take: 10,
-    });
-    return data;
-  } catch (error) {
-    console.error("Database Error:", error);
-    throw new Error("Failed to fetch revenue data.");
-  }
-}
-
 export async function getItem(id: number) {
   try {
     const data = await db.catalog_procedure.findFirst({
       include: {
         catalog_procedure_status: true,
       },
-      where: { id: id },
+      where: { id },
     });
     return data;
   } catch (error) {
@@ -63,6 +50,39 @@ export async function fetchFilteredItems(query: string, currentPage?: number) {
       take: 10,
     });
     return data;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch revenue data.");
+  }
+}
+
+export async function fetchItemsPages(query: string) {
+  noStore();
+
+  try {
+    const count = await db.catalog_procedure.count({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: query,
+            },
+          },
+          {
+            placer_full_name: {
+              contains: query,
+            },
+          },
+          {
+            registration_number: {
+              contains: query,
+            },
+          },
+        ],
+      },
+    });
+    const totalPages = Math.ceil(count / 10);
+    return { count, totalPages };
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch revenue data.");
