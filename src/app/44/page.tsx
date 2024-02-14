@@ -6,15 +6,15 @@ import { fetchItemsPages } from "@/lib/data";
 import Pagination from "@/ui/pagination";
 import Limit from "@/ui/limit";
 
-export default async function Page({
-  searchParams,
-}: {
+interface Props {
   searchParams?: {
     query?: string;
     page?: string;
     limit?: string;
   };
-}) {
+}
+
+export default async function Page({ searchParams }: Props) {
   const defaultLimit = 10;
 
   const query = searchParams?.query || "";
@@ -22,6 +22,7 @@ export default async function Page({
   const limit = Number(searchParams?.limit) || defaultLimit;
 
   const count = await fetchItemsPages(query);
+  // const { count, data } = await fetchItems(query);
 
   return (
     <div>
@@ -44,7 +45,7 @@ export default async function Page({
         <div>Всего: {count}</div>
       </div>
 
-      <Suspense key={query + currentPage} fallback="Loading">
+      <Suspense key={query + currentPage + limit} fallback="Loading">
         <Table query={query} currentPage={currentPage} limit={limit} />
       </Suspense>
       <div style={{ display: "flex", gap: 10, justifyContent: "right" }}>

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItem } from "@/lib/data";
 
+export const revalidate = 3600;
+
 export default async function Page({ params }: { params: { id: number } }) {
   const data = await getItem(Number(params.id));
 
@@ -11,7 +13,7 @@ export default async function Page({ params }: { params: { id: number } }) {
     <div>
       <div style={{ display: "flex", gap: 10 }}>
         <div>
-          <Link href="/">Главная</Link>
+          <Link href="/">Home</Link>
         </div>
         <div>/</div>
         <div>
